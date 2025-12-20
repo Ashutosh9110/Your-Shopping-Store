@@ -24,13 +24,12 @@ const allowedOrigins = [
   "http://localhost:5174",
   "http://localhost:3000",
   "https://yourownshoppingstore.netlify.app",
-  "https://your-shopping-store.onrender.com"
 ]
 
 const corsOptions = {
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true)
+      callback(null, origin)
     } else {
       console.log("Blocked by CORS:", origin)
       callback(new Error("Not allowed by CORS"))
@@ -38,12 +37,7 @@ const corsOptions = {
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: [
-    "Content-Type",
-    "Authorization",
-    "X-Requested-With",
-    "Accept",
-  ],
+  allowedHeaders: [ "Content-Type", "Authorization"],
   optionsSuccessStatus: 200,
 }
 
@@ -66,11 +60,11 @@ app.use("/api/users", userRoutes)
 app.use("/api/videos", videoRoutes)
 app.use("/api/admin", adminSetupRoute)
 
-app.use("/uploads", (req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*")
-  res.header("Cross-Origin-Resource-Policy", "cross-origin")
-  next()
-})
+// app.use("/uploads", (req, res, next) => {
+//   res.header("Access-Control-Allow-Origin", "*")
+//   res.header("Cross-Origin-Resource-Policy", "cross-origin")
+//   next()
+// })
 
 app.use("/uploads", express.static(path.join(__dirname, "src", "uploads")))
 
