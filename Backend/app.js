@@ -69,13 +69,24 @@ app.use("/api/admin", adminSetupRoute)
 app.use("/uploads", express.static(path.join(__dirname, "src", "uploads")))
 
 
-// Health check route
-app.get("/", (req, res) => {  
+app.get("/", (req, res) => {
   res.json({ message: "Backend is running" })
 })
 
+
+// Health check route
+app.get("/health/db", async (req, res) => {
+  try {
+    await sequelize.authenticate()
+    res.json({ status: "ok", db: "connected" })
+  } catch {
+    res.json({ status: "degraded", db: "disconnected" })
+  }
+})
+
+
 sequelize
-  .sync({ alter: true })
+  .sync()
   .then(() => {
     console.log("Database connected & synced") 
   })
