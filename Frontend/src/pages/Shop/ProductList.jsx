@@ -118,7 +118,7 @@ export default function ProductList() {
                         src={imgSrc1}
                         alt={p.name}
                         className="
-                          absolute inset-0 m-auto w-full h-[400px] bg-[#f7f7f7] object-contain transition-all duration-500 opacity-100 group-hover:opacity-0 scale-100 group-hover:scale-95 mt-1"
+                          absolute inset-0 m-auto w-full h-[400px] bg-[#f7f7f7] object-contain transition-all duration-500 opacity-100 group-hover:opacity-0 scale-100 group-hover:scale-95 mt-0.5"
                       />
                       <img
                         src={imgSrc2}
