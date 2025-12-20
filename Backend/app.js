@@ -24,7 +24,7 @@ const allowedOrigins = [
   "http://localhost:5174",
   "http://localhost:3000",
   "https://yourownshoppingstore.netlify.app",
-  "https://your-own-shopping-store.onrender.com"
+  "https://your-shopping-store.onrender.com"
 ];
 
 const corsOptions = {
@@ -76,7 +76,7 @@ app.use("/uploads", express.static(path.join(__dirname, "src", "uploads")));
 
 
 // Health check route
-app.get("/", (req, res) => {  
+app.get("/health", (req, res) => {  
   res.json({ message: "Backend is running" });
 });
 
