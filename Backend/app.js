@@ -18,6 +18,7 @@ dotenv.config()
 
 const app = express()
 
+// Allowed frontend origins
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
@@ -54,6 +55,7 @@ app.use(express.json())
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
+// API routes
 app.use("/api/auth", authRoutes)
 app.use("/api/categories", categoryRoutes)
 app.use("/api/products", productRoutes)
@@ -72,20 +74,20 @@ app.use("/uploads", (req, res, next) => {
 
 app.use("/uploads", express.static(path.join(__dirname, "src", "uploads")))
 
-app.get("/health", async (req, res) => {
-  try {
-    await sequelize.authenticate() // lightweight DB check
-    res.status(200).json({
-      status: "ok",
-      database: "connected",
-    })
-  } catch (error) {
-    console.error("Health check failed:", error)
-    res.status(500).json({
-      status: "error",
-      database: "disconnected",
-    })
-  }
+
+// Health check route
+app.get("/", (req, res) => {  
+  res.json({ message: "Backend is running" })
 })
 
+sequelize
+  .sync({ alter: true })
+  .then(() => {
+    console.log("Database connected & synced") 
+  })
+  .catch((err) => console.error("DB error:", err))
+
+app.listen(process.env.PORT || 5000, () => {
+  console.log(`Server running on port ${process.env.PORT || 5000}`)
+})
 
