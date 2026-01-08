@@ -1,52 +1,55 @@
-import React, { useEffect, useState } from "react";
-import API, { BASE_URL } from "../../api/api";
-import { useNavigate, useLocation } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Star } from "lucide-react";
+import React, { useEffect, useState } from "react"
+import API, { BASE_URL } from "../../api/api"
+import { useNavigate, useLocation } from "react-router-dom"
+import { motion } from "framer-motion"
+import { Star } from "lucide-react"
+import useDebounce from "../../hooks/useDebounce"
 
 export default function ProductList() {
-  const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [search, setSearch] = useState("");
-  const navigate = useNavigate();
-  const location = useLocation();
+  const [products, setProducts] = useState([])
+  const [categories, setCategories] = useState([])
+  const [selectedCategory, setSelectedCategory] = useState("")
+  const [search, setSearch] = useState("")
+  const navigate = useNavigate()
+  const location = useLocation()
+  const debouncedSearch = useDebounce(search, 500)
+  
 
   const fetchProducts = async () => {
     try {
-      const params = {};
-      if (selectedCategory) params.category = selectedCategory;
-      if (search) params.search = search;
-      const res = await API.get("/api/products", { params });
-      setProducts(res.data);
+      const params = {}
+      if (selectedCategory) params.category = selectedCategory
+      if (debouncedSearch) params.search = debouncedSearch
+      const res = await API.get("/api/products", { params })
+      setProducts(res.data)
     } catch (err) {
-      console.error("Failed to load products:", err);
+      console.error("Failed to load products:", err)
     }
-  };
+  }
 
   const fetchCategories = async () => {
     try {
-      const res = await API.get("/api/categories");
-      setCategories(res.data);
+      const res = await API.get("/api/categories")
+      setCategories(res.data)
     } catch (err) {
-      console.error("Failed to load categories:", err);
+      console.error("Failed to load categories:", err)
     }
-  };
+  }
 
   useEffect(() => {
-    fetchCategories();
-  }, []);
+    fetchCategories()
+  }, [])
 
   useEffect(() => {
-    const timeout = setTimeout(() => fetchProducts(), 400);
-    return () => clearTimeout(timeout);
-  }, [selectedCategory, search]);
+    fetchProducts()
+  }, [selectedCategory, debouncedSearch])
+  
 
   useEffect(() => {
-    const categoryParam = new URLSearchParams(location.search).get("category");
-    const category = categoryParam?.replace(/\s+/g, "").toLowerCase();
-    setSelectedCategory(category);
-  }, [location]);
+    const categoryParam = new URLSearchParams(location.search).get("category")
+    const category = categoryParam?.replace(/\s+/g, "").toLowerCase()
+    setSelectedCategory(category)
+  }, [location])
   
 
   return (
@@ -55,7 +58,6 @@ export default function ProductList() {
         <span className="text-gray-600">Explore Our </span><span className="text-green-600">Latest Products</span>
       </h2>
 
-      {/* Filters */}
       <div className="flex flex-wrap justify-center mb-12 gap-4">
         <select
           value={selectedCategory}
@@ -75,16 +77,17 @@ export default function ProductList() {
           placeholder="Search for a product..."
           className="border border-gray-300 bg-white px-5 py-2 rounded-xl w-72 text-gray-700 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-green-600 transition"
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => {
+            setSearch(e.target.value)
+          }}
         />
       </div>
 
-      {/* Product Grid */}
       <div className="max-w-[1250px] mx-auto grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-2 gap-y-2">
         {products.map((p, idx) => {
-          const imgs = Array.isArray(p.image) ? p.image : p.image ? [p.image] : [];
-          const img1 = imgs[0] || "/placeholder.png";
-          const img2 = imgs[1] || imgs[0] || "/placeholder.png";
+          const imgs = Array.isArray(p.image) ? p.image : p.image ? [p.image] : []
+          const img1 = imgs[0] || "/placeholder.png"
+          const img2 = imgs[1] || imgs[0] || "/placeholder.png"
 
           return (
             <motion.div
@@ -102,15 +105,15 @@ export default function ProductList() {
                 <div className="relative w-full h-56 flex items-center justify-center p-6">
                 {(() => {
                 const formatUrl = (url) => {
-                  if (!url) return "/placeholder.png";
+                  if (!url) return "/placeholder.png"
                   if (url.startsWith("http://") || url.startsWith("https://")) {
                     return url
                   }
-                  return `${BASE_URL.replace(/\/$/, "")}${url.startsWith("/") ? "" : "/"}${url}`;
-                };
+                  return `${BASE_URL.replace(/\/$/, "")}${url.startsWith("/") ? "" : "/"}${url}`
+                }
 
-                  const imgSrc1 = img1 ? formatUrl(img1) : "/placeholder.png";
-                  const imgSrc2 = img2 ? formatUrl(img2) : imgSrc1;
+                  const imgSrc1 = img1 ? formatUrl(img1) : "/placeholder.png"
+                  const imgSrc2 = img2 ? formatUrl(img2) : imgSrc1
 
                   return (
                     <>
@@ -127,7 +130,7 @@ export default function ProductList() {
                           absolute inset-0 m-auto w-full h-full object-contain transition-all duration-500 opacity-0 group-hover:opacity-100 scale-105 group-hover:scale-100 mt-8"
                       />
                     </>
-                  );
+                  )
                 })()}
 
                 </div>
@@ -164,8 +167,8 @@ export default function ProductList() {
                   </p>
                   <button
                     onClick={(e) => {
-                      e.stopPropagation();
-                      navigate(`/products/${p.id}`);
+                      e.stopPropagation()
+                      navigate(`/products/${p.id}`)
                     }}
                     className="bg-gray-600 text-white px-4 py-1 rounded-full text-sm font-medium hover:bg-gray-500 transition cursor-pointer"
                   >
@@ -174,9 +177,9 @@ export default function ProductList() {
                 </div>
               </div>
             </motion.div>
-          );
+          )
         })}
       </div>
     </div>
-  );
+  )
 }
