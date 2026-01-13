@@ -1,9 +1,8 @@
-// src/pages/Shop/Home.jsx
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React from "react"
+import { useNavigate } from "react-router-dom"
 
 export default function Home() {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-teal-100 to-green-200">
@@ -18,5 +17,5 @@ export default function Home() {
         Browse Products
       </button>
     </div>
-  );
+  )
 }

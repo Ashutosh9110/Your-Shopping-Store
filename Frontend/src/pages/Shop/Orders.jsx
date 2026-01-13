@@ -1,52 +1,53 @@
-// src/pages/Orders.jsx
-import React, { useEffect, useState, useContext } from "react";
-import API, { BASE_URL } from "../../api/api";
-import { AuthContext } from "../../contexts/AuthContext";
+import { useEffect, useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { Link } from "react-router-dom"
+import API, { BASE_URL } from "../../api/api"
 
 export default function Orders() {
-  const [orders, setOrders] = useState([]);
-  const { token } = useContext(AuthContext);
-  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch()
+  const [orders, setOrders] = useState([])
+  const { token } = useSelector(state => state.auth)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
+    if (!token) return
+
     const fetchOrders = async () => {
-      if (!token) return;
-      setLoading(true);
+      setLoading(true)
       try {
-        const res = await API.get("/api/orders/my-orders", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setOrders(res.data);
+        const res = await API.get("/api/orders/my-orders")
+        setOrders(res.data)
       } catch (err) {
-        console.error("Failed to fetch orders:", err);
+        console.error("Failed to fetch orders:", err)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
-    fetchOrders();
-  }, [token]);
+    }
+    fetchOrders()
+  }, [token])
 
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64 text-gray-600">
         Loading your orders...
       </div>
-    );
+    )
   }
 
-  if (orders.length === 0) {
+  if (!orders.length) {
     return (
       <div className="flex flex-col justify-center items-center h-80">
         <p className="text-gray-500 text-lg">You haven’t placed any orders yet.</p>
-        <a
-          href="/products"
-          className="mt-4 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-400"
+        <Link
+          to="/products"
+          className="mt-4 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-500"
         >
           Browse Products
-        </a>
+        </Link>
       </div>
-    );
+    )
   }
+
 
   return (
     <div className="max-w-5xl mx-auto mt-30 px-4">
@@ -85,11 +86,10 @@ export default function Orders() {
             </div>
 
             <div className="divide-y">
-              {order.OrderItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="py-3 flex items-center justify-between gap-3"
-                >
+            {order.OrderItems
+              .filter(item => item.Product)   // prevent null product crashes
+              .map((item) => (
+                <div key={item.id} className="py-3 flex items-center justify-between gap-3">
                   <div className="flex items-center gap-4">
                     <img
                       src={`${BASE_URL}${item.Product.image}`}
@@ -122,5 +122,5 @@ export default function Orders() {
         ))}
       </div>
     </div>
-  );
+  )
 }
