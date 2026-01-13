@@ -1,30 +1,33 @@
-import { NavLink, Link, useNavigate, useLocation } from "react-router-dom";
-import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../contexts/AuthContext";
+import { NavLink, Link, useNavigate, useLocation } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { useSelector, useDispatch } from "react-redux"
+import { logout } from "../store/slices/authSlice"
+
 
 const Navbar = () => {
-  const { user, logout } = useContext(AuthContext);
-  const [role, setRole] = useState(localStorage.getItem("role"));
-  const [openMenu, setOpenMenu] = useState(false);
+  const dispatch = useDispatch()
+  const { user } = useSelector(state => state.auth)
 
-  const navigate = useNavigate();
-  const location = useLocation();
+  const [role, setRole] = useState(localStorage.getItem("role"))
+  const [openMenu, setOpenMenu] = useState(false)
+
+  const navigate = useNavigate()
+  const location = useLocation()
 
   useEffect(() => {
-    setRole(user?.role || localStorage.getItem("role"));
-  }, [user]);
+    setRole(user?.role || localStorage.getItem("role"))
+  }, [user])
 
-  const hideOnAuthPages = ["/login", "/signup", "/forgot-password", "/reset-password"];
-  if (hideOnAuthPages.some((path) => location.pathname.startsWith(path))) return null;
+  const hideOnAuthPages = ["/login", "/signup", "/forgot-password", "/reset-password"]
+  if (hideOnAuthPages.some((path) => location.pathname.startsWith(path))) return null
 
   const handleLogout = () => {
-    logout();
-    navigate("/login");
-  };
+    dispatch(logout())
+    navigate("/login")
+  }
 
-  // Base class for NavLink items
   const linkBase =
-    "relative pb-1 transition-all duration-300 hover:text-green-600 after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 hover:after:w-full after:bg-green-600 after:transition-all after:duration-300";
+    "relative pb-1 transition-all duration-300 hover:text-green-600 after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 hover:after:w-full after:bg-green-600 after:transition-all after:duration-300"
 
   return (
     <nav
@@ -33,7 +36,6 @@ const Navbar = () => {
       `}
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        {/* Logo */}
         <Link
           to="/"
           className="text-2xl font-bold tracking-tight flex items-center hover:opacity-90 transition"
@@ -41,7 +43,6 @@ const Navbar = () => {
           <span className="text-gray-600">Your</span><span className="text-green-600">Store</span><span className="text-green-600 text-3xl leading-8">.</span>
         </Link>
 
-        {/* Mobile Hamburger */}
           <button
             className="md:hidden text-3xl text-gray-700"
             onClick={() => setOpenMenu(!openMenu)}
@@ -121,7 +122,6 @@ const Navbar = () => {
         </div>
 
 
-{/* Mobile Menu */}
 {openMenu && (
   <div
     className="md:hidden absolute right-6 top-20 w-48 bg-white text-gray-800 p-4 rounded-2xl shadow-xl 
@@ -130,7 +130,6 @@ const Navbar = () => {
     {role === "user" && (
       <>
         <div className="" />
-        {/* First item near logout */}
         <NavLink
           to="/products"
           onClick={() => setOpenMenu(false)}
@@ -209,7 +208,6 @@ const Navbar = () => {
 
 
 
-        {/* Auth Buttons */}
         <div className="flex items-center gap-3">
           {user ? (
             <button
@@ -231,7 +229,7 @@ const Navbar = () => {
         </div>
       </div>
     </nav>
-  );
-};
+  )
+}
 
-export default Navbar;
+export default Navbar

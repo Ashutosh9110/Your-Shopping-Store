@@ -66,7 +66,6 @@ export default function Cart() {
           key={item.id}
           className="flex justify-between items-center border-b py-4"
         >
-          {/* Product Info */}
           <div className="flex items-center gap-4">
           <img
             src={formatUrl(item.Product?.image)}
@@ -83,7 +82,6 @@ export default function Cart() {
           </div>
           
 
-          {/* Quantity + Delete */}
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
               <button
