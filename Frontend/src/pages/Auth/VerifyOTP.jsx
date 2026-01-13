@@ -58,7 +58,7 @@ export default function VerifyOTP() {
 
     try {
       const result = await dispatch(
-        verifyOtp({ email: pendingEmail, otp: fullOtp })
+        verifyOtp({ emailOrPhone: pendingEmail, otp: fullOtp })
       ).unwrap()
 
       if (result.success) {
@@ -77,7 +77,7 @@ export default function VerifyOTP() {
 
   const resendOTP = async () => {
     try {
-      await dispatch(resendOtp({ email: pendingEmail })).unwrap()
+      await dispatch(resendOtp({ emailOrPhone: pendingEmail })).unwrap()
 
       setOtp(Array(6).fill(""))
       inputRefs.current[0].focus()

@@ -1,13 +1,12 @@
-// src/components/Admin/EditProduct.jsx
-import React, { useState } from "react";
-import API from "../../api/api";
+import React, { useState } from "react"
+import API from "../../api/api"
 
 export default function EditProduct({ product, onClose }) {
-  const [updated, setUpdated] = useState(product);
-  const token = localStorage.getItem("token");
+  const [updated, setUpdated] = useState(product)
+  const token = localStorage.getItem("token")
 
   const handleSave = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
     try {
       await API.put(
         `/api/products/${product.id}`,
@@ -20,14 +19,14 @@ export default function EditProduct({ product, onClose }) {
         {
           headers: { Authorization: `Bearer ${token}` },
         }
-      );
-      alert("Product updated successfully!");
-      onClose();
+      )
+      alert("Product updated successfully!")
+      onClose()
     } catch (err) {
-      console.error(err);
-      alert("Failed to update product.");
+      console.error(err)
+      alert("Failed to update product.")
     }
-  };
+  }
 
 
   return (
@@ -81,5 +80,5 @@ export default function EditProduct({ product, onClose }) {
         </div>
       </form>
     </div>
-  );
+  )
 }

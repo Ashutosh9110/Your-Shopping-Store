@@ -1,25 +1,24 @@
-// src/components/Admin/CategoryManager.jsx
-import React, { useState, useEffect } from "react";
-import API from "../api/api";
+import React, { useState, useEffect } from "react"
+import API from "../api/api"
 
 export default function CategoryManager() {
-  const [categories, setCategories] = useState([]);
-  const [newCategory, setNewCategory] = useState("");
-  const token = localStorage.getItem("token");
+  const [categories, setCategories] = useState([])
+  const [newCategory, setNewCategory] = useState("")
+  const token = localStorage.getItem("token")
 
   const loadCategories = async () => {
     try {
-      const res = await API.get("/api/categories");
-      setCategories(res.data);
+      const res = await API.get("/api/categories")
+      setCategories(res.data)
     } catch (err) {
-      console.error("Error loading categories:", err);
-      alert("Failed to load categories.");
+      console.error("Error loading categories:", err)
+      alert("Failed to load categories.")
     }
-  };
+  }
 
   const handleAddCategory = async (e) => {
-    e.preventDefault();
-    if (!newCategory.trim()) return;
+    e.preventDefault()
+    if (!newCategory.trim()) return
 
     try {
       await API.post(
@@ -30,14 +29,14 @@ export default function CategoryManager() {
             Authorization: `Bearer ${token}`,
           },
         }
-      );
-      setNewCategory("");
-      loadCategories();
+      )
+      setNewCategory("")
+      loadCategories()
     } catch (err) {
-      console.error("Error adding category:", err);
-      alert(err.response?.data?.message || "Failed to add category. Make sure you are logged in as admin.");
+      console.error("Error adding category:", err)
+      alert(err.response?.data?.message || "Failed to add category. Make sure you are logged in as admin.")
     }
-  };
+  }
 
   const handleDelete = async (id) => {
     try {
@@ -45,17 +44,17 @@ export default function CategoryManager() {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      });
-      loadCategories();
+      })
+      loadCategories()
     } catch (err) {
-      console.error("Error deleting category:", err);
-      alert("Failed to delete category. Only admin can delete.");
+      console.error("Error deleting category:", err)
+      alert("Failed to delete category. Only admin can delete.")
     }
-  };
+  }
 
   useEffect(() => {
-    loadCategories();
-  }, []);
+    loadCategories()
+  }, [])
 
   return (
     <div className="bg-white p-4 rounded-xl shadow-lg mt-6">
@@ -88,5 +87,5 @@ export default function CategoryManager() {
         ))}
       </ul>
     </div>
-  );
+  )
 }
