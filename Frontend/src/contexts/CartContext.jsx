@@ -1,4 +1,3 @@
-// src/contexts/CartContext.jsx
 import React, { createContext, useState, useEffect, useContext } from "react";
 import API from "../api/api";
 import { AuthContext } from "./AuthContext";
@@ -30,8 +29,6 @@ export function CartProvider({ children }) {
       setCart(enriched);
       return;
     }
-    
-  
     const res = await API.get("/api/cart");
     const items = res.data?.CartItems || [];
     const sorted = [...items].sort((a, b) => a.id - b.id);

@@ -1,58 +1,58 @@
-import React, { useContext, useState } from "react";
-import { CartContext } from "../../contexts/CartContext";
-import { AuthContext } from "../../contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
-import API from "../../api/api";
-import { formatUrl } from "../../utils/formatUrl";
+import React, { useContext, useState } from "react"
+import { CartContext } from "../../contexts/CartContext"
+import { AuthContext } from "../../contexts/AuthContext"
+import { useNavigate } from "react-router-dom"
+import API from "../../api/api"
+import { formatUrl } from "../../utils/formatUrl"
 
 
 export default function Cart() {
-  const { cart, updateCartItem, removeFromCart, fetchCart } = useContext(CartContext);
-  const { token } = useContext(AuthContext);
-  const [address, setAddress] = useState("");
-  const [placingOrder, setPlacingOrder] = useState(false);
-  const navigate = useNavigate();
+  const { cart, updateCartItem, removeFromCart, fetchCart } = useContext(CartContext)
+  const { token } = useContext(AuthContext)
+  const [address, setAddress] = useState("")
+  const [placingOrder, setPlacingOrder] = useState(false)
+  const navigate = useNavigate()
 
   const handleCheckout = async () => {
     if (!token) {
-      alert("Please log in to place an order.");
-      return;
+      alert("Please log in to place an order.")
+      return
     }
 
     if (!address.trim()) {
-      alert("Please enter a shipping address.");
-      return;
+      alert("Please enter a shipping address.")
+      return
     }
 
     try {
-      setPlacingOrder(true);
+      setPlacingOrder(true)
       const cartItems = cart.map((item) => ({
         productId: item.productId || item.Product?.id,
         quantity: item.quantity,
-      }));
+      }))
 
-      const res = await API.post("/api/orders", { cartItems, address });
-      console.log("Order response:", res.data);
+      const res = await API.post("/api/orders", { cartItems, address })
+      console.log("Order response:", res.data)
 
-      await fetchCart();
-      setAddress("");
-      navigate("/checkout");
+      await fetchCart()
+      setAddress("")
+      navigate("/checkout")
     } catch (err) {
-      console.error("Order failed:", err);
-      alert(err.response?.data?.message || "Failed to place order");
+      console.error("Order failed:", err)
+      alert(err.response?.data?.message || "Failed to place order")
     } finally {
-      setPlacingOrder(false);
+      setPlacingOrder(false)
     }
-  };
+  }
 
   if (!cart || cart.length === 0) {
-    return <p className="text-center mt-20">🛒 Your cart is empty.</p>;
+    return <p className="text-center mt-20">🛒 Your cart is empty.</p>
   }
 
   const total = cart.reduce(
     (sum, item) => sum + (item.Product?.price || 0) * item.quantity,
     0
-  ); 
+  ) 
   
 
   return (
@@ -89,9 +89,9 @@ export default function Cart() {
               <button
                 onClick={() => {
                   if (item.quantity === 1) {
-                    removeFromCart(item.id);
+                    removeFromCart(item.id)
                   } else {
-                    updateCartItem(item.id, item.quantity - 1);
+                    updateCartItem(item.id, item.quantity - 1)
                   }
                 }}
                 className="px-2 py-1 bg-gray-300 rounded hover:bg-gray-600 cursor-pointer"
@@ -146,5 +146,5 @@ export default function Cart() {
         </button>
       </div>
     </div>
-  );
+  )
 }

@@ -1,35 +1,35 @@
-import React, { useState } from "react";
-import API from "../../api/api";
-import { motion } from "framer-motion";
-import { BASE_URL } from "../../api/api";
-import { Link } from "react-router-dom";
+import React, { useState } from "react"
+import API from "../../api/api"
+import { motion } from "framer-motion"
+import { BASE_URL } from "../../api/api"
+import { Link } from "react-router-dom"
 
 export default function ForgotPassword() {
-  const [emailOrPhone, setEmailOrPhone] = useState("");
-  const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [resetLink, setResetLink] = useState(null);
+  const [emailOrPhone, setEmailOrPhone] = useState("")
+  const [message, setMessage] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [resetLink, setResetLink] = useState(null)
 
   const handleForgot = async (e) => {
-    e.preventDefault();
-    setMessage("");
-    setResetLink(null);
+    e.preventDefault()
+    setMessage("")
+    setResetLink(null)
 
     try {
-      setLoading(true);
-      const res = await API.post("/api/auth/forgot-password", { emailOrPhone });
-      setMessage(res.data.message || "Check your inbox for reset instructions.");
+      setLoading(true)
+      const res = await API.post("/api/auth/forgot-password", { emailOrPhone })
+      setMessage(res.data.message || "Check your inbox for reset instructions.")
 
       if (res.data.resetURL) {
-        setResetLink(res.data.resetURL);
+        setResetLink(res.data.resetURL)
       }
     } catch (err) {
-      console.error(err);
-      setMessage(err.response?.data?.message || "Something went wrong.");
+      console.error(err)
+      setMessage(err.response?.data?.message || "Something went wrong.")
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <div className="relative w-full h-screen flex items-center justify-center text-center text-white overflow-hidden">
@@ -50,7 +50,6 @@ export default function ForgotPassword() {
           </Link>
       <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/70"></div>
 
-      {/* Form Card */}
       <motion.div
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
@@ -101,5 +100,5 @@ export default function ForgotPassword() {
         )}
       </motion.div>
     </div>
-  );
+  )
 }
