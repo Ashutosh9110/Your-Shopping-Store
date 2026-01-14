@@ -1,10 +1,11 @@
 // src/pages/Shop/Profile.jsx
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import API from "../../api/api";
-import { AuthContext } from "../../contexts/AuthContext";
+
 
 export default function Profile() {
-  const { token, user } = useContext(AuthContext);
+  const { token, user } = useSelector((state) => state.auth);
   const [profile, setProfile] = useState(null);
   const [form, setForm] = useState({ name: "", email: "", phone: "" });
   const [addresses, setAddresses] = useState([]);
@@ -51,7 +52,6 @@ export default function Profile() {
     }
   };
 
-  // Add new address
   const handleAddAddress = async () => {
     try {
       await API.post("api/users/address", newAddress);
@@ -155,7 +155,6 @@ export default function Profile() {
           ))
         )}
 
-        {/* Add Address */}
         <div className="mt-6 border-t pt-4">
           <h4 className="font-semibold mb-3 text-gray-600">Add New Address</h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
