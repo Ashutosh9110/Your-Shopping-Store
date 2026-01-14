@@ -1,7 +1,7 @@
-import { DataTypes } from "sequelize";
-import { sequelize } from "../config/db.js";
-import User from "./User.js"; 
-import Product from "./Product.js";
+import { DataTypes } from "sequelize"
+import { sequelize } from "../config/db.js"
+import User from "./User.js" 
+import Product from "./Product.js"
 
 
 export const Order = sequelize.define("Order", {
@@ -30,15 +30,18 @@ export const Order = sequelize.define("Order", {
     type: DataTypes.ENUM("PENDING", "PAID"),
     defaultValue: "PENDING",
   },
+  razorpayOrderId: {
+  type: DataTypes.STRING,
+  allowNull: true,
+  },
   status: {
     type: DataTypes.ENUM("PENDING", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"),
     defaultValue: "PENDING",
   },
-});
+})
 
 
 
-// OrderItem model for products in an order
 export const OrderItem = sequelize.define("OrderItem", {
   id: {
     type: DataTypes.UUID,
@@ -53,17 +56,14 @@ export const OrderItem = sequelize.define("OrderItem", {
     type: DataTypes.FLOAT,
     allowNull: false,
   },
-});
+})
 
 
-// Relationships
-User.hasMany(Order, { foreignKey: "userId" });
-Order.belongsTo(User, { foreignKey: "userId" });
+User.hasMany(Order, { foreignKey: "userId" })
+Order.belongsTo(User, { foreignKey: "userId" })
 
-Order.hasMany(OrderItem, { foreignKey: "orderId", onDelete: "CASCADE" });
-OrderItem.belongsTo(Order, { foreignKey: "orderId" });
+Order.hasMany(OrderItem, { foreignKey: "orderId", onDelete: "CASCADE" })
+OrderItem.belongsTo(Order, { foreignKey: "orderId" })
 
-Product.hasMany(OrderItem, { foreignKey: "productId" });
-OrderItem.belongsTo(Product, { foreignKey: "productId" });
-
-// export default Order;
+Product.hasMany(OrderItem, { foreignKey: "productId" })
+OrderItem.belongsTo(Product, { foreignKey: "productId" })

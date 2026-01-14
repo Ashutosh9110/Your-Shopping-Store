@@ -1,11 +1,12 @@
-// src/routes/paymentRoutes.js
-import express from "express";
-import { createOrder, verifyPayment } from "../controllers/paymentController.js";
-import { verifyToken } from "../middleware/authMiddleware.js";
+import express from "express"
+import { createOrder, razorpayWebhook, verifyPayment } from "../controllers/paymentController.js"
+import { verifyToken } from "../middleware/authMiddleware.js"
 
-const router = express.Router();
+const router = express.Router()
 
-router.post("/create-order", verifyToken, createOrder);
-router.post("/verify", verifyToken, verifyPayment);
+router.post("/create-order", verifyToken, createOrder)
+router.post("/verify", verifyToken, verifyPayment)
+router.post("/webhook", razorpayWebhook)
 
-export default router;
+
+export default router

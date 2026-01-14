@@ -44,12 +44,12 @@ const corsOptions = {
 app.use(cors(corsOptions))
 app.options("/{*splat}", cors(corsOptions))
 
+app.use("/api/payments/webhook", express.raw({ type: "application/json" }))
 app.use(express.json())
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-// API routes
 app.use("/api/auth", authRoutes)
 app.use("/api/categories", categoryRoutes)
 app.use("/api/products", productRoutes)

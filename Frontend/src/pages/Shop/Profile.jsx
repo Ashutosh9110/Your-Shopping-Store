@@ -1,14 +1,13 @@
-// src/pages/Shop/Profile.jsx
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import API from "../../api/api";
+import React, { useEffect, useState } from "react"
+import { useSelector } from "react-redux"
+import API from "../../api/api"
 
 
 export default function Profile() {
-  const { token, user } = useSelector((state) => state.auth);
-  const [profile, setProfile] = useState(null);
-  const [form, setForm] = useState({ name: "", email: "", phone: "" });
-  const [addresses, setAddresses] = useState([]);
+  const { token, user } = useSelector((state) => state.auth)
+  const [profile, setProfile] = useState(null)
+  const [form, setForm] = useState({ name: "", email: "", phone: "" })
+  const [addresses, setAddresses] = useState([])
   const [newAddress, setNewAddress] = useState({
     fullName: "",
     street: "",
@@ -17,45 +16,43 @@ export default function Profile() {
     postalCode: "",
     country: "",
     phone: "",
-  });
+  })
 
 
-  // Fetch user + address info
   const fetchProfile = async () => {
     try {
-      const res = await API.get("api/users/profile");
-      setProfile(res.data);
+      const res = await API.get("api/users/profile")
+      setProfile(res.data)
       setForm({
         name: res.data.name || "",
         email: res.data.email || "",
         phone: res.data.phone || "",
-      });
-      setAddresses(res.data.Addresses || []);
+      })
+      setAddresses(res.data.Addresses || [])
     } catch (err) {
-      console.error("Failed to load profile", err);
+      console.error("Failed to load profile", err)
     }
-  };
+  }
 
   useEffect(() => {
-    fetchProfile();
-  }, []);
+    fetchProfile()
+  }, [])
 
-  // Update profile info
   const handleProfileUpdate = async () => {
     try {
-      await API.put("api/users/profile", form);
-      alert("Profile updated!");
-      fetchProfile();
+      await API.put("api/users/profile", form)
+      alert("Profile updated!")
+      fetchProfile()
     } catch (err) {
-      console.error("Failed to update profile", err);
-      alert("Failed to update profile");
+      console.error("Failed to update profile", err)
+      alert("Failed to update profile")
     }
-  };
+  }
 
   const handleAddAddress = async () => {
     try {
-      await API.post("api/users/address", newAddress);
-      alert("Address added!");
+      await API.post("api/users/address", newAddress)
+      alert("Address added!")
       setNewAddress({
         fullName: "",
         street: "",
@@ -64,25 +61,24 @@ export default function Profile() {
         postalCode: "",
         country: "",
         phone: "",
-      });
-      fetchProfile();
+      })
+      fetchProfile()
     } catch (err) {
-      console.error("Failed to add address", err);
+      console.error("Failed to add address", err)
     }
-  };
+  }
 
-  // Delete address
   const handleDeleteAddress = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this address?")) return;
+    if (!window.confirm("Are you sure you want to delete this address?")) return
     try {
-      await API.delete(`api/users/address/${id}`);
-      fetchProfile();
+      await API.delete(`api/users/address/${id}`)
+      fetchProfile()
     } catch (err) {
-      console.error("Failed to delete address", err);
+      console.error("Failed to delete address", err)
     }
-  };
+  }
 
-  if (!profile) return <p className="text-center mt-20">Loading profile...</p>;
+  if (!profile) return <p className="text-center mt-20">Loading profile...</p>
 
   return (
     <div className="max-w-3xl mx-auto bg-white shadow-lg p-6 rounded-lg mt-30">
@@ -90,7 +86,6 @@ export default function Profile() {
         My Profile
       </h2>
 
-      {/* Profile Info */}
       <div className="mb-8">
         <h3 className="text-xl font-semibold mb-4 text-gray-600">Personal Info</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -124,7 +119,6 @@ export default function Profile() {
         </button>
       </div>
 
-      {/* Addresses */}
       <div>
         <h3 className="text-xl font-semibold mb-4 text-gray-600">
           Saved Addresses
@@ -231,5 +225,5 @@ export default function Profile() {
         </div>
       </div>
     </div>
-  );
+  )
 }
