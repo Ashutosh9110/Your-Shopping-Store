@@ -21,6 +21,17 @@ export default function Cart() {
   const [address, setAddress] = useState("")
   const [placingOrder, setPlacingOrder] = useState(false)
 
+  const getFirstImage = (image) => {
+    if (!image) return null
+    if (Array.isArray(image)) {
+      const first = image[0]
+      if (typeof first === "string") return first
+      if (typeof first === "object" && first?.url) return first.url
+    }
+    if (typeof image === "string") return image
+    return null
+  }
+
   useEffect(() => {
     if (token) {
       dispatch(fetchCart())
@@ -75,14 +86,18 @@ export default function Cart() {
         Your Cart
       </h2>
 
-      {cart.map(item => (
+      {cart.map(item => {
+        const img = getFirstImage(item.Product?.image)
+        const imgSrc = img ? formatUrl(img) : "/placeholder.png"
+
+        return (
         <div
           key={item.id}
           className="flex justify-between items-center border-b py-4"
         >
           <div className="flex items-center gap-4">
             <img
-              src={formatUrl(item.Product?.image)}
+              src={imgSrc}
               alt={item.Product?.name || "Product"}
               className="w-20 h-20 object-cover rounded-md"
             />
@@ -132,7 +147,7 @@ export default function Cart() {
             </button>
           </div>
         </div>
-      ))}
+      )})}
 
       <div className="mt-6 border-t pt-4">
         <h3 className="text-xl font-semibold mb-4 text-gray-600">
@@ -163,3 +178,4 @@ export default function Cart() {
     </div>
   )
 }
+  

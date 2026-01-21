@@ -16,19 +16,35 @@ export default function ProductPage() {
 
   const token = useSelector(state => state.auth.token)
 
+  const normalizeImages = (image) => {
+    if (!image) return []
+
+    if (Array.isArray(image)) {
+      return image
+        .map((img) => {
+          if (typeof img === "string") return img
+          if (typeof img === "object" && img?.url) return img.url
+          return null
+        })
+        .filter(Boolean)
+    }
+
+    if (typeof image === "string") return [image]
+
+    return []
+  }
+
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         const res = await API.get(`/api/products/${id}`)
         const p = res.data
-
         setProduct(p)
 
-        const firstImage = Array.isArray(p.image)
-          ? p.image[0]
-          : p.image || p.image1 || p.image2
+        const images = normalizeImages(p.image)
+        const first = images[0] ? formatUrl(images[0]) : "/placeholder.png"
 
-        setSelectedImage(formatUrl(firstImage))
+        setSelectedImage(first)
         setDiscount(p.discount || 15)
       } catch (err) {
         console.error("Failed to load product:", err)
@@ -51,16 +67,13 @@ export default function ProductPage() {
     (product.price * discount) / 100
   ).toFixed(2)
 
-  const imageList = Array.isArray(product.image)
-    ? product.image
-    : [product.image, product.image2, product.image3, product.image4].filter(Boolean)
+  const imageList = normalizeImages(product.image)
 
     const handleAddToCart = async () => {
       if (!token) {
         navigate("/login")
         return
       }
-    
       await dispatch(addToCart({ productId: product.id, quantity: 1 }))
       navigate("/cart")
     }
@@ -74,29 +87,37 @@ export default function ProductPage() {
           <div>
             <div className="bg-gray-100 rounded-2xl p-6 flex items-center justify-center mb-4">
               <img
-                src={selectedImage}
+                src={selectedImage || "/placeholder.png"}
                 alt={product.name}
                 className="w-full h-auto max-h-[300px] sm:max-h-[350px] md:max-h-[420px] object-contain"
               />
             </div>
 
             <div className="flex justify-center gap-3 flex-wrap">
-              {imageList.map((img, i) => {
-                const fullUrl = formatUrl(img)
-                return (
-                  <img
-                    key={i}
-                    src={fullUrl}
-                    alt={`thumb-${i}`}
-                    onClick={() => setSelectedImage(fullUrl)}
-                    className={`w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg cursor-pointer border-2 ${
-                      selectedImage === fullUrl
-                        ? "border-slate-800"
-                        : "border-transparent"
-                    }`}
-                  />
-                )
-              })}
+              {imageList.length > 0 ? (
+                imageList.map((img, i) => {
+                  const fullUrl = formatUrl(img)
+                  return (
+                    <img
+                      key={i}
+                      src={fullUrl}
+                      alt={`thumb-${i}`}
+                      onClick={() => setSelectedImage(fullUrl)}
+                      className={`w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg cursor-pointer border-2 ${
+                        selectedImage === fullUrl
+                          ? "border-slate-800"
+                          : "border-transparent"
+                      }`}
+                    />
+                  )
+                })
+              ) : (
+                <img
+                  src="/placeholder.png"
+                  alt="placeholder"
+                  className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg opacity-60"
+                />
+              )}
             </div>
           </div>
 
