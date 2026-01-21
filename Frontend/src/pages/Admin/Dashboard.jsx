@@ -1,69 +1,69 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import AddProduct from "../../components/Admin/AddProduct";
-import EditProduct from "../../components/Admin/EditProduct";
-import { motion } from "framer-motion";
-import API, { BASE_URL } from "../../api/api";
-import { formatUrl } from "../../utils/formatUrl";
+import React, { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import AddProduct from "../../components/Admin/AddProduct"
+import EditProduct from "../../components/Admin/EditProduct"
+import { motion } from "framer-motion"
+import API, { BASE_URL } from "../../api/api"
+import { formatUrl } from "../../utils/formatUrl"
 
 export default function Dashboard() {
-  const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [editingProduct, setEditingProduct] = useState(null);
-  const [showAddModal, setShowAddModal] = useState(false);
-  const navigate = useNavigate();
+  const [products, setProducts] = useState([])
+  const [categories, setCategories] = useState([])
+  const [selectedCategory, setSelectedCategory] = useState("")
+  const [editingProduct, setEditingProduct] = useState(null)
+  const [showAddModal, setShowAddModal] = useState(false)
+  const navigate = useNavigate()
 
  
 
   const loadProducts = async () => {
     try {
-      const params = {};
-      if (selectedCategory) params.category = selectedCategory;
+      const params = {}
+      if (selectedCategory) params.category = selectedCategory
 
-      const res = await API.get("/api/products", { params });
-      setProducts(res.data);
+      const res = await API.get("/api/products", { params })
+      setProducts(res.data)
     } catch (err) {
-      console.error("Error loading products:", err);
+      console.error("Error loading products:", err)
     }
-  };
+  }
 
   const loadCategories = async () => {
     try {
-      const res = await API.get("/api/categories");
-      setCategories(res.data);
+      const res = await API.get("/api/categories")
+      setCategories(res.data)
     } catch (err) {
-      console.error("Error loading categories:", err);
+      console.error("Error loading categories:", err)
     }
-  };
+  }
 
   useEffect(() => {
-    loadCategories();
-  }, []);
+    loadCategories()
+  }, [])
 
   useEffect(() => {
-    loadProducts();
-  }, [selectedCategory]);
+    loadProducts()
+  }, [selectedCategory])
 
   // Delete a product
   const handleDelete = async (productId) => {
-    if (!window.confirm("Are you sure you want to delete this product?")) return;
+    if (!window.confirm("Are you sure you want to delete this product?")) return
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token")
       await API.delete(`/api/products/${productId}`, {
         headers: { Authorization: `Bearer ${token}` },
-      });
-      loadProducts();
-      alert("Product deleted successfully!");
+      })
+      loadProducts()
+      alert("Product deleted successfully!")
     } catch (err) {
       if (err.response?.status === 401) {
-        alert("Unauthorized. Please log in as admin.");
+        alert("Unauthorized. Please log in as admin.")
       } else {
-        alert("Error deleting product");
+        alert("Error deleting product")
       }
-      console.error(err);
+      console.error(err)
     }
-  };
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-200 via-teal-100 to-green-100 p-6">
@@ -92,21 +92,29 @@ export default function Dashboard() {
       {/* Product Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {products.map((p) => {
-          const firstImage = Array.isArray(p.image)           // pick the first available image
-            ? p.image[0]
-            : p.image || p.image1 || p.image2;
-
+          const firstImage =
+          typeof p.image === "string"
+            ? p.image
+            : Array.isArray(p.image)
+            ? typeof p.image[0] === "string"
+              ? p.image[0]
+              : p.image[0]?.url
+            : null
+            
           return (
             <motion.div
               key={p.id}
               whileHover={{ scale: 1.03 }}
               className="bg-white/80 backdrop-blur-md shadow-xl rounded-2xl p-4 transition-all border border-teal-100 flex flex-col items-center text-center"
             >
+            {firstImage && (
               <img
                 src={formatUrl(firstImage)}
                 alt={p.name}
                 className="h-full w-44 object-cover rounded-xl mb-4 mx-auto mt-5"
               />
+            )}
+
               <h3 className="font-bold text-lg text-teal-800">{p.name}</h3>
               <p className="text-gray-600 mb-1">
               ₹{new Intl.NumberFormat("en-IN", {
@@ -131,7 +139,7 @@ export default function Dashboard() {
                 </button>
               </div>
             </motion.div>
-          );
+          )
         })}
       </div>
 
@@ -139,8 +147,8 @@ export default function Dashboard() {
       {showAddModal && (
         <AddProduct
           onSuccess={() => {
-            setShowAddModal(false);
-            loadProducts();
+            setShowAddModal(false)
+            loadProducts()
           }}
         />
       )}
@@ -149,11 +157,11 @@ export default function Dashboard() {
         <EditProduct
           product={editingProduct}
           onClose={() => {
-            setEditingProduct(null);
-            loadProducts();
+            setEditingProduct(null)
+            loadProducts()
           }}
         />
       )}
     </div>
-  );
+  )
 }

@@ -85,9 +85,9 @@ export default function ProductList() {
 
       <div className="max-w-[1250px] mx-auto grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-2 gap-y-2">
         {products.map((p, idx) => {
-          const imgs = Array.isArray(p.image) ? p.image : p.image ? [p.image] : []
-          const img1 = imgs[0] || "/placeholder.png"
-          const img2 = imgs[1] || imgs[0] || "/placeholder.png"
+            const imgs = Array.isArray(p.image) ? p.image : p.image ? [p.image] : []
+            const img1 = imgs[0]?.url || "/placeholder.png"
+            const img2 = imgs[1]?.url || imgs[0]?.url || "/placeholder.png"
 
           return (
             <motion.div

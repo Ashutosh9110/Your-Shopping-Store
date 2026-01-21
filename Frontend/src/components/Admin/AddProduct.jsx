@@ -15,7 +15,7 @@ export default function AddProduct({ onSuccess }) {
   const [loadingCategories, setLoadingCategories] = useState(true);
   const navigate = useNavigate();
 
-  useEffect(() => {
+  useEffect(() => { 
     const fetchCategories = async () => {
       try {
         const res = await API.get("/api/categories");
@@ -141,4 +141,4 @@ export default function AddProduct({ onSuccess }) {
     </form>
   );
 }
-  
+    

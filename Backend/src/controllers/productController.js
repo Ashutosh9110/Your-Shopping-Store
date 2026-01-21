@@ -1,22 +1,21 @@
-import { sequelize } from "../config/db.js";
-import Product from "../models/Product.js";
-import Category from "../models/Category.js";
-import { Op } from "sequelize";
-import cloudinary from "../config/cloudinary.js";
+import { sequelize } from "../config/db.js"
+import Product from "../models/Product.js"
+import Category from "../models/Category.js"
+import { Op } from "sequelize"
+import cloudinary from "../config/cloudinary.js"
 
 
-// ==================== Create Product ====================
 export const createProduct = async (req, res) => {
   try {
-    const { name, price, quantity, categoryId } = req.body;
+    const { name, price, quantity, categoryId } = req.body
 
-    let imagesArray = [];
+    let imagesArray = []
 
     if (req.files && req.files.length > 0) {
       imagesArray = req.files.map((file) => ({
         url: file.path,
         public_id: file.filename
-      }));
+      }))
     }
 
     const newProduct = await Product.create({
@@ -25,24 +24,23 @@ export const createProduct = async (req, res) => {
       quantity,
       categoryId,
       image: imagesArray,
-    });
+    })
 
-    res.status(201).json(newProduct);
+    res.status(201).json(newProduct)
   } catch (err) {
-    console.error("Error creating product:", err);
-    res.status(500).json({ message: "Failed to create product" });
+    console.error("Error creating product:", err)
+    res.status(500).json({ message: "Failed to create product" })
   }
-};
+}
 
 
-// ==================== Get All Products ====================
 export const getProducts = async (req, res) => {
   try {
-    const { category, search } = req.query;
+    const { category, search } = req.query
 
-    const whereClause = {};
+    const whereClause = {}
     if (search) {
-      whereClause.name = { [Op.iLike]: `%${search}%` };
+      whereClause.name = { [Op.iLike]: `%${search}%` }
     }
 
     const queryOptions = {
@@ -54,7 +52,7 @@ export const getProducts = async (req, res) => {
         },
       ],
       order: [["createdAt", "DESC"]],
-    };
+    }
 
     if (category) {
       const normalizedCategory = category.toLowerCase().replace(/[\s-]+/g, "")
@@ -66,122 +64,114 @@ export const getProducts = async (req, res) => {
           ""
         ),
         normalizedCategory
-      );
+      )
     }
-    const products = await Product.findAll(queryOptions);
+    const products = await Product.findAll(queryOptions)
 
     const normalized = products.map((p) => {
-      const json = p.toJSON();
-      if (!json.image) json.image = [];
-      else if (!Array.isArray(json.image)) json.image = [json.image];
-      return json;
-    });
-    res.json(normalized);
+      const json = p.toJSON()
+      if (!json.image) json.image = []
+      else if (!Array.isArray(json.image)) json.image = [json.image]
+      return json
+    })
+    res.json(normalized)
   } catch (err) {
-    console.error("Error fetching products:", err);
-    res.status(500).json({ message: "Failed to fetch products" });
+    console.error("Error fetching products:", err)
+    res.status(500).json({ message: "Failed to fetch products" })
   }
-};
+}
 
 
 
-// ==================== Get Single Product ====================
 export const getProduct = async (req, res) => {
   try {
     const product = await Product.findByPk(req.params.id, {
       include: [{ model: Category }],
-    });
-    if (!product) return res.status(404).json({ message: "Product not found" });
+    })
+    if (!product) return res.status(404).json({ message: "Product not found" })
 
-    const json = product.toJSON();
-    if (!json.image) json.image = [];
-    else if (!Array.isArray(json.image)) json.image = [json.image];
+    const json = product.toJSON()
+    if (!json.image) json.image = []
+    else if (!Array.isArray(json.image)) json.image = [json.image]
 
-    res.json(json);
+    res.json(json)
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: err.message })
   }
-};
+}
 
-// ==================== Update Product ====================
 
 
 export const updateProduct = async (req, res) => {
   try {
-    const { name, price, quantity, categoryId, keepExistingImages, removeImages } = req.body;
+    const { name, price, quantity, categoryId, keepExistingImages, removeImages } = req.body
 
-    const product = await Product.findByPk(req.params.id);
-    if (!product) return res.status(404).json({ message: "Product not found" });
+    const product = await Product.findByPk(req.params.id)
+    if (!product) return res.status(404).json({ message: "Product not found" })
 
-    let updatedImages = product.image || [];
+    let updatedImages = product.image || []
 
-    // Remove selected images
     if (removeImages && Array.isArray(JSON.parse(removeImages))) {
-      const removeList = JSON.parse(removeImages);
+      const removeList = JSON.parse(removeImages)
 
       for (const public_id of removeList) {
-        await cloudinary.uploader.destroy(public_id);   // delete from Cloudinary
-        updatedImages = updatedImages.filter(img => img.public_id !== public_id);
+        await cloudinary.uploader.destroy(public_id)  
+        updatedImages = updatedImages.filter(img => img.public_id !== public_id)
       }
     }
 
-    // Add new images
     if (req.files && req.files.length > 0) {
       const newImages = req.files.map((file) => ({
         url: file.path,
         public_id: file.filename
-      }));
+      }))
 
-      updatedImages = [...updatedImages, ...newImages];
+      updatedImages = [...updatedImages, ...newImages]
     }
 
-    // Optionally remove all images
     if (keepExistingImages === "false" && !req.files?.length) {
-      // delete all cloudinary images
       for (const img of updatedImages) {
-        await cloudinary.uploader.destroy(img.public_id);
+        await cloudinary.uploader.destroy(img.public_id)
       }
-      updatedImages = [];
+      updatedImages = []
     }
 
-    // Save updates
-    product.name = name ?? product.name;
-    product.price = price ?? product.price;
-    product.quantity = quantity ?? product.quantity;
-    product.categoryId = categoryId ?? product.categoryId;
-    product.image = updatedImages;
+    product.name = name ?? product.name
+    product.price = price ?? product.price
+    product.quantity = quantity ?? product.quantity
+    product.categoryId = categoryId ?? product.categoryId
+    product.image = updatedImages
 
-    await product.save();
+    await product.save()
 
     res.json({
       message: "Product updated successfully",
       product,
-    });
+    })
   } catch (err) {
-    console.error("Error updating product:", err);
-    res.status(500).json({ message: err.message });
+    console.error("Error updating product:", err)
+    res.status(500).json({ message: err.message })
   }
-};
+}
 
-// ==================== Delete Product ====================
 export const deleteProduct = async (req, res) => {
   try {
-    const product = await Product.findByPk(req.params.id);
-    if (!product) return res.status(404).json({ message: "Product not found" });
+    const product = await Product.findByPk(req.params.id)
+    if (!product) return res.status(404).json({ message: "Product not found" })
 
     // Delete all Cloudinary images
     if (product.image && Array.isArray(product.image)) {
       for (const img of product.image) {
-        await cloudinary.uploader.destroy(img.public_id);
+        await cloudinary.uploader.destroy(img.public_id)
       }
     }
 
-    await product.destroy();
+    await product.destroy()
 
-    res.json({ message: "Product deleted successfully" });
+    res.json({ message: "Product deleted successfully" })
   } catch (err) {
-    console.error("Error deleting product:", err);
-    res.status(500).json({ message: err.message });
+    console.error("Error deleting product:", err)
+    res.status(500).json({ message: err.message })
   }
-};
+}
 
