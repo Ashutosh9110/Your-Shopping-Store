@@ -1,13 +1,24 @@
 import { useEffect, useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 import { Link } from "react-router-dom"
 import API, { BASE_URL } from "../../api/api"
+import { formatUrl } from "../../utils/formatUrl"
 
 export default function Orders() {
-  const dispatch = useDispatch()
   const [orders, setOrders] = useState([])
   const { token } = useSelector(state => state.auth)
   const [loading, setLoading] = useState(false)
+
+  const getFirstImage = (image) => {
+    if (!image) return null
+    if (Array.isArray(image)) {
+      const first = image[0]
+      if (typeof first === "string") return first
+      if (typeof first === "object" && first?.url) return first.url
+    }
+    if (typeof image === "string") return image
+    return null
+  }
 
   useEffect(() => {
     if (!token) return
@@ -87,28 +98,38 @@ export default function Orders() {
 
             <div className="divide-y">
             {order.OrderItems
-              .filter(item => item.Product)   // prevent null product crashes
-              .map((item) => (
-                <div key={item.id} className="py-3 flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-4">
-                    <img
-                      src={`${BASE_URL}${item.Product.image}`}
-                      alt={item.Product.name}
-                      className="w-16 h-16 rounded-md object-cover"
-                    />
-                    <div>
-                      <p className="font-medium text-gray-800">{item.Product.name}</p>
-                      <p className="text-sm text-gray-500">
-                        {item.quantity} × ₹{item.price.toFixed(2)}
-                      </p>
-                    </div>
-                  </div>
-                  <p className="text-teal-700 font-semibold">
-                  ₹{(item.quantity * item.price).toFixed(2)}
-                  </p>
-                </div>
-              ))}
-            </div>
+               .filter(item => item.Product)
+               .map((item) => {
+                 const img = getFirstImage(item.Product.image)
+                 const imgSrc = img ? formatUrl(img) : "/placeholder.png"
+
+                 return (
+                   <div
+                     key={item.id}
+                     className="py-3 flex items-center justify-between gap-3"
+                   >
+                     <div className="flex items-center gap-4">
+                       <img
+                         src={imgSrc}
+                         alt={item.Product.name}
+                         className="w-16 h-16 rounded-md object-cover"
+                       />
+                       <div>
+                         <p className="font-medium text-gray-800">
+                           {item.Product.name}
+                         </p>
+                         <p className="text-sm text-gray-500">
+                           {item.quantity} × ₹{item.price.toFixed(2)}
+                         </p>
+                       </div>
+                     </div>
+                     <p className="text-teal-700 font-semibold">
+                       ₹{(item.quantity * item.price).toFixed(2)}
+                     </p>
+                   </div>
+                 )
+               })}
+           </div>
 
             <div className="mt-4 flex justify-between items-center">
               <p className="text-gray-600">
