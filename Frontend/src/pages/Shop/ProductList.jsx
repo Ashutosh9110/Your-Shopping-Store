@@ -51,7 +51,32 @@ export default function ProductList() {
     setSelectedCategory(category)
   }, [location])
   
+  const normalizeImages = (image) => {
+    if (!image) return []
+  
+    // image: "string"
+    if (typeof image === "string") return [image]
+  
+    if (Array.isArray(image)) {
+      return image
+        .map((img) => {
+          if (typeof img === "string") return img
+          if (typeof img === "object" && img.url) return img.url
+          return null
+        })
+        .filter(Boolean)
+    }
+  
+    return []
+  }
+  
+  const formatUrl = (url) => {
+    if (!url) return "/placeholder.png"
+    if (url.startsWith("http://") || url.startsWith("https://")) return url
+    return `${BASE_URL.replace(/\/$/, "")}${url.startsWith("/") ? "" : "/"}${url}`
+  }
 
+  
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-20 px-6 font-[Poppins]">
       <h2 className="text-4xl font-semibold mb-12 text-center text-gray-800 mt-15">
@@ -85,9 +110,9 @@ export default function ProductList() {
 
       <div className="max-w-[1250px] mx-auto grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-2 gap-y-2">
         {products.map((p, idx) => {
-            const imgs = Array.isArray(p.image) ? p.image : p.image ? [p.image] : []
-            const img1 = imgs[0]?.url || "/placeholder.png"
-            const img2 = imgs[1]?.url || imgs[0]?.url || "/placeholder.png"
+            const imgs = normalizeImages(p.image)
+            const img1 = imgs[0] || "/placeholder.png"
+            const img2 = imgs[1] || imgs[0] || "/placeholder.png"
 
           return (
             <motion.div
