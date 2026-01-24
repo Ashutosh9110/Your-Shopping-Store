@@ -5,6 +5,7 @@ import { motion } from "framer-motion"
 import { Star } from "lucide-react"
 import useDebounce from "../../hooks/useDebounce"
 import ExpandingSearch from "../../components/ExpandingSearch"
+import CategorySidebar from "../../components/CategorySidebar"
 
 export default function ProductList() {
   const [products, setProducts] = useState([])
@@ -84,24 +85,23 @@ export default function ProductList() {
         <span className="text-gray-600">Explore Our </span><span className="text-green-600">Latest Products</span>
       </h2>
 
-      <div className="flex flex-wrap justify-center mb-12 gap-4">
-        <select
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-          className="border border-gray-300 bg-white rounded-xl px-5 py-2 text-gray-700 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-gray-600 transition cursor-pointer"
-        >
-          <option value="">All Categories</option>
-          {categories.map((c) => (
-            <option key={c.id} value={c.name}>
-              {c.name}
-            </option>
-          ))}
-        </select>
+      <div className="max-w-[1350px] mx-auto">
+        <div className="flex flex-col md:flex-row gap-8">
+            {/* Sidebar - Desktop Only (or responsive if decided to keep visible) */}
+            <CategorySidebar 
+                categories={categories} 
+                selectedCategory={selectedCategory} 
+                onSelectCategory={setSelectedCategory} 
+            />
 
-        <ExpandingSearch search={search} setSearch={setSearch} />
-      </div>
+            <div className="flex-1">
+                {/* Search Bar Area */}
+                <div className="flex justify-end mb-6">
+                    <ExpandingSearch search={search} setSearch={setSearch} />
+                </div>
 
-      <div className="max-w-[1250px] mx-auto grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-2 gap-y-2">
+                {/* Product Grid */}
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-6">
         {products.map((p, idx) => {
             const imgs = normalizeImages(p.image)
             const img1 = imgs[0] || "/placeholder.png"
@@ -198,6 +198,9 @@ export default function ProductList() {
           )
         })}
       </div>
+        </div>
+      </div>
+    </div>
     </div>
   )
 }
