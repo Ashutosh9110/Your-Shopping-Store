@@ -27,7 +27,11 @@ const PlaceOrderButton = ({ onClick, isLoading, disabled }) => {
   const tickMarkRef = useRef(null);
 
   useEffect(() => {
-    MorphSVGPlugin.convertToPath("circle, rect");
+
+    const newBtnBase = MorphSVGPlugin.convertToPath(btnBaseRef.current)[0];
+    btnBaseRef.current = newBtnBase;
+    
+    MorphSVGPlugin.convertToPath([cBottomRef.current, cTopRef.current, cCenterRef.current, cEndRef.current]);
     
     gsap.set(paperPlaneRouteRef.current, { drawSVG: "0% 0%" });
     gsap.set(rectSentItemsRef.current, { x: "-=240" });
@@ -78,7 +82,7 @@ const PlaceOrderButton = ({ onClick, isLoading, disabled }) => {
     tl.to(rectSentItemsRef.current, { x: "0", duration: 0.5 }, "revealStart");
     tl.to(
         mask1Ref.current,
-        { x: "-=260", duration: 0.5, ease: "power1.inOut" },
+        { attr: { x: "-=260" }, duration: 0.5, ease: "power1.inOut" },
         "revealStart"
     );
     tl.to(
@@ -144,7 +148,7 @@ const PlaceOrderButton = ({ onClick, isLoading, disabled }) => {
         <g id="rectSent" clipPath="url(#clipPath)">
             <g id="rectSentItems" ref={rectSentItemsRef}>
                 <rect id="sentBase" x="460" y="468.5" width="480" height="143" rx="23" fill="white"/>
-                <text id="txtSent" fill="#4F67ED" xmlSpace="preserve" style={{whiteSpace: "pre"}} fontFamily="Roboto" fontSize="82" fontWeight="bold" letterSpacing="0.025em"><tspan x="637.487" y="568.027">Sent!</tspan></text>
+                <text id="txtSent" fill="#000000" xmlSpace="preserve" style={{whiteSpace: "pre"}} fontFamily="Roboto" fontSize="82" fontWeight="bold" letterSpacing="0.025em"><tspan x="637.487" y="568.027">Ordered</tspan></text>
             </g>
         </g>
         
@@ -152,7 +156,7 @@ const PlaceOrderButton = ({ onClick, isLoading, disabled }) => {
             <g filter="url(#flShadow)">
                 <rect id="btnBase" ref={btnBaseRef} x="418.117" y="460.55" width="563.765" height="158.899" rx="27" fill="#F1F3FF" />
             </g>
-            <text id="txtSend" ref={txtSendRef} fill="#291D89" xmlSpace="preserve" style={{whiteSpace: "pre"}} fontFamily="Roboto" fontSize="82" fontWeight="bold" letterSpacing="0.06em"><tspan x="679.379" y="568.027">Send</tspan></text>
+            <text id="txtSend" ref={txtSendRef} fill="#291D89" xmlSpace="preserve" style={{whiteSpace: "pre"}} fontFamily="Roboto" fontSize="82" fontWeight="bold" letterSpacing="0.06em"><tspan x="679.379" y="568.027">Order</tspan></text>
             <g id="paperPlane" ref={paperPlaneRef} style={{transformOrigin: "0px 0px 0px"}} data-svg-origin="563.55859375 527.734375" transform="matrix(0.8396,0.5432,-0.5432,0.8396,377.09924,-222.6639)">
                 <path id="paperPlanePath" ref={paperPlanePathRef} d="M560.611 481.384C562.003 479.263 565.113 479.263 566.505 481.384L607.063 543.177C615.657 556.272 607.507 573.375 592.766 575.676L566.422 557.462V510.018C566.422 508.436 565.14 507.154 563.558 507.154C561.976 507.154 560.693 508.436 560.693 510.018V557.462L534.349 575.676C519.609 573.375 511.459 556.272 520.053 543.177L560.611 481.384Z" fill="#4F67EB"/>
             </g>
