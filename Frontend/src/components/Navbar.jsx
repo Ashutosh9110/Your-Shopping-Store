@@ -2,6 +2,7 @@ import { NavLink, Link, useNavigate, useLocation } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { useSelector, useDispatch } from "react-redux"
 import { logout } from "../store/slices/authSlice"
+import LogoutButton from "./LogoutButton"
 
 
 const Navbar = () => {
@@ -196,12 +197,9 @@ const Navbar = () => {
     )}
 
     {user && (
-      <button
-        onClick={handleLogout}
-        className="bg-gray-700 hover:bg-gray-600 transition text-white px-4 py-2 rounded-lg mt-1"
-      >
-        Logout
-      </button>
+      <div className="mt-1">
+        <LogoutButton onClick={handleLogout} />
+      </div>
     )}
   </div>
 )}
@@ -210,17 +208,7 @@ const Navbar = () => {
 
         <div className="flex items-center gap-3">
           {user ? (
-            <button
-              onClick={handleLogout}
-              className={`px-4 py-1.5 rounded-full text-sm font-semibold shadow-md transition-all duration-300 cursor-pointer 
-                ${
-                  location.pathname === "/"
-                    ? "bg-gray-600 hover:bg-gray-500 text-white"
-                    : "bg-gray-600 hover:bg-gray-500 text-white"
-                }`}
-            >
-              Logout
-            </button>
+            <LogoutButton onClick={handleLogout} />
           ) : (
             <>
 
