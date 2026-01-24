@@ -56,7 +56,6 @@ export default function ProductList() {
   const normalizeImages = (image) => {
     if (!image) return []
   
-    // image: "string"
     if (typeof image === "string") return [image]
   
     if (Array.isArray(image)) {
@@ -68,7 +67,6 @@ export default function ProductList() {
         })
         .filter(Boolean)
     }
-  
     return []
   }
   
@@ -87,7 +85,6 @@ export default function ProductList() {
 
       <div className="max-w-[1350px] mx-auto">
         <div className="flex flex-col md:flex-row gap-8">
-            {/* Sidebar - Desktop Only (or responsive if decided to keep visible) */}
             <CategorySidebar 
                 categories={categories} 
                 selectedCategory={selectedCategory} 
@@ -95,12 +92,10 @@ export default function ProductList() {
             />
 
             <div className="flex-1">
-                {/* Search Bar Area */}
                 <div className="flex justify-end mb-6">
                     <ExpandingSearch search={search} setSearch={setSearch} />
                 </div>
 
-                {/* Product Grid */}
                 <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-6">
         {products.map((p, idx) => {
             const imgs = normalizeImages(p.image)
