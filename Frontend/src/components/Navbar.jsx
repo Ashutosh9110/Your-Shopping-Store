@@ -32,8 +32,12 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 w-full z-50 text-white transition-all duration-300
-        ${location.pathname === "/" ? "bg-transparent backdrop-blur-sm" : "bg-white text-gray-800 shadow-md"}
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300
+        ${location.pathname === "/" 
+          ? "bg-transparent backdrop-blur-sm text-white" 
+          : location.pathname === "/products" 
+            ? "bg-transparent backdrop-blur-sm text-gray-800" 
+            : "bg-white text-gray-800 shadow-md"}
       `}
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
