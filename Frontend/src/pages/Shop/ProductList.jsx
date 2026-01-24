@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom"
 import { motion } from "framer-motion"
 import { Star } from "lucide-react"
 import useDebounce from "../../hooks/useDebounce"
+import ExpandingSearch from "../../components/ExpandingSearch"
 
 export default function ProductList() {
   const [products, setProducts] = useState([])
@@ -97,15 +98,7 @@ export default function ProductList() {
           ))}
         </select>
 
-        <input
-          type="text"
-          placeholder="Search for a product..."
-          className="border border-gray-300 bg-white px-5 py-2 rounded-xl w-72 text-gray-700 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-green-600 transition"
-          value={search}
-          onChange={(e) => {
-            setSearch(e.target.value)
-          }}
-        />
+        <ExpandingSearch search={search} setSearch={setSearch} />
       </div>
 
       <div className="max-w-[1250px] mx-auto grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-2 gap-y-2">
